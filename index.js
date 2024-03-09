@@ -87,7 +87,7 @@ setInterval(async () => {
     .setApplicationId("1212531074417303573")
     .setType("STREAMING") // PLAYING, STREAMING
     .setURL("https://chzzk.naver.com/6d395c84c99777272f872171b4dfc122")
-    .setState("현재 방송중입니다!!")
+    .setState(config.Broadcasting)
     .setName(config.Name)
     .setDetails(config.Details)
     .setAssetsLargeImage(config.LargeImage)
@@ -102,14 +102,14 @@ setInterval(async () => {
     .setType("PLAYING") // PLAYING, STREAMING
     .setURL("https://chzzk.naver.com/6d395c84c99777272f872171b4dfc122")
     .setState(config.State)
-    .setName(config.Name)
-    .setDetails(config.Details)
-    .setAssetsLargeImage(config.LargeImage)
-    .setAssetsLargeText(config.LargeText)
-    .setAssetsSmallImage(config.SmallImage)
-    .setAssetsSmallText(config.SmallText)
-    .addButton(config.FirstButtonName, config.FirstButtonUrl)
-    .addButton(config.SecondButtonName, config.SecondButtonUrl);
+    .setName(config.Name2)
+    .setDetails(config.Details2)
+    .setAssetsLargeImage(config.LargeImage2)
+    .setAssetsLargeText(config.LargeText2)
+    .setAssetsSmallImage(config.SmallImage2)
+    .setAssetsSmallText(config.SmallText2)
+    .addButton(config.FirstButtonName2, config.FirstButtonUrl2)
+    .addButton(config.SecondButtonName2, config.SecondButtonUrl2);
 
   console.log(await checkNaverStatus())
   if (await checkNaverStatus() == 'OPEN') {
