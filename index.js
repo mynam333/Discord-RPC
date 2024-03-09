@@ -79,7 +79,7 @@ client.on("ready", async () => {
   }, 3000);
 });
 
-setInterval(() => {
+setInterval(async () => {
   const broadcasting = new Discord.CustomStatus(client).setEmoji('✨').setState('치지직 방송중!');
   const nope = new Discord.CustomStatus(client).setEmoji('🎲').setState('뒹굴거리는 중!');
 
@@ -111,12 +111,11 @@ setInterval(() => {
     .addButton(config.FirstButtonName, config.FirstButtonUrl)
     .addButton(config.SecondButtonName, config.SecondButtonUrl);
 
-  if (checkNaverStatus() == 'OPEN') {
-    broadcasting
-    client.user.setPresence({ activities: [r1, broadcasting] });
+  console.log(await checkNaverStatus())
+  if (await checkNaverStatus() == 'OPEN') {
+    await client.user.setPresence({ activities: [r1, broadcasting] });
   } else {
-    nope
-    client.user.setPresence({ activities: [r2, nope] });
+    await client.user.setPresence({ activities: [r2, nope] });
   }
 }, 15000); // Update every 15 seconds
 
