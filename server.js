@@ -28,11 +28,9 @@ server.all("/", (req, res) => {
       </style>
     </head>
     <body>
-      <h1>Node.js Uptime Keep Alive</h1>
-      <p>This is a keep-alive endpoint for your Node.js application.</p>
-      <p>To ensure your application stays online 24/7, join our <a href="https://discord.gg/uepgJzsf6n">Discord server</a> and run the command:</p>
-      <pre>/uptime add</pre>
-      <p>Copy and paste the link of your host into our uptime monitoring app:</p>
+      <h1>유아루 Discord RPC</h1>
+      <p> </p>
+      <p>모니터링용 페이지입니다!</p>
     </body>
     </html>
   `);
