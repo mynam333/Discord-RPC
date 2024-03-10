@@ -1,29 +1,4 @@
-
-///////////////////////////
-// Aayu5h and Sahil
-// https://discord.gg/uepgJzsf6n
-// https://spicydevs.me/
-///////////////////////////
-
-const axios = require('axios');
-const headers = {
-  'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'
-};
-
-async function checkNaverStatus() {
-  try {
-    const response = await axios.get("https://api.chzzk.naver.com/service/v2/channels/6d395c84c99777272f872171b4dfc122/live-detail", { headers: headers });
-    if (response.status === 200) {
-      return response.data.content.status;
-    } else {
-      console.log(`Error Status code: ${response.status}\nResponse: ${response.data}`);
-      return null;
-    }
-  } catch (error) {
-    console.error('Error:', error)
-  }
-};
-
+require("dotenv").config();
 const Discord = require("discord.js-selfbot-v13");
 const client = new Discord.Client({
   readyStatus: false,
@@ -31,127 +6,87 @@ const client = new Discord.Client({
 });
 require("dotenv").config();
 const config = require("./config.js");
-function validateConfig(config) {
-  const requiredFields = [
-    "showTime",
-    "token",
-    "timeZone",
-    "Name",
-    "State",
-    "Details",
-    "FirstButtonName",
-    "FirstButtonUrl",
-    "SecondButtonName",
-    "SecondButtonUrl",
-    "LargeImage",
-    "LargeText",
-    "SmallImage",
-    "SmallText",
-  ];
 
-  const missingFields = requiredFields.filter((field) => !config[field]);
 
-  if (missingFields.length > 0) {
-    console.error(`Config is not filled properly. Missing fields: ${missingFields.join(", ")}`);
-    process.exit(1); // Exit the process with an error code
-  }
+
+client.on('ready', async (c) => {
+  console.log(`✅ ${c.user.tag} 디스코드 RPC 시작 `)
+  
+  const channel_id = '6d395c84c99777272f872171b4dfc122'
+  const url = `https://api.chzzk.naver.com/service/v2/channels/${channel_id}/live-detail`
+
+  activity(url, channel_id);
+
+  setInterval(() => {
+      activity(url, channel_id);
+  }, 15000);
+})
+
+client.login(config.token);
+
+async function activity(url, channel_id) {
+    try {
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36',
+                'Content-Type': 'application/json'
+            }
+        });
+        if (response.ok) {
+            const data = await response.json();
+            if (data && data.content) {
+                const { status, liveTitle, liveCategoryValue, concurrentUserCount, channel } = data.content;
+                if (status == 'OPEN') {
+                    const category = liveCategoryValue || '기타';
+                    const user_count = concurrentUserCount || 'None';
+                    const channel_name = channel ? channel.channelName || 'None' : 'None';
+                    const channel_image = channel ? (channel.channelImageUrl || "https://ssl.pstatic.net/cmstatic/nng/img/img_anonymous_square_gray_opacity2x.png?type=f120_120_na") : "https://ssl.pstatic.net/cmstatic/nng/img/img_anonymous_square_gray_opacity2x.png?type=f120_120_na";
+                    const preview_image = (data.content.liveImageUrl || '').replace('{type}', '1080');
+                    const user_count_2 = user_count.toLocaleString();
+                    const state = new Discord.CustomStatus(client).setEmoji('✨').setState('치지직 방송중!');
+                    const image = await Discord.RichPresence.getExternal(client,'1212531074417303573',preview_image,preview_image)
+                    const rpc = new Discord.RichPresence(client)
+                        .setApplicationId("1212531074417303573")
+                        .setType("STREAMING") // PLAYING, STREAMING
+                        .setURL(`https://chzzk.naver.com/live/${channel_id}`)
+                        .setState(liveTitle)
+                        .setName(config.Name)
+                        .setDetails('치지직에서 방송중입니다!')
+                        .setAssetsLargeImage(image[0].external_asset_path)
+                        .setAssetsLargeText(`${category} 하는 중`)
+                        .setAssetsSmallImage(config.SmallImage)
+                        .setAssetsSmallText(`${user_count_2}명 시청중...`)
+                        .addButton(config.FirstButtonName, config.FirstButtonUrl)
+                        .addButton(config.SecondButtonName, config.SecondButtonUrl);
+                    client.user.setPresence({ activities: [state,rpc]})
+                }
+                else{
+                    const state = new Discord.CustomStatus(client).setEmoji('🎲').setState('뒹굴거리는 중!');
+                    const rpc = new Discord.RichPresence(client)
+                        .setApplicationId("1212531074417303573")
+                        .setType("PLAYING") // PLAYING, STREAMING
+                        .setURL(`https://chzzk.naver.com/${channel_id}`)
+                        .setState(config.State)
+                        .setName(config.Name2)
+                        .setDetails(config.Details2)
+                        .setAssetsLargeImage(config.LargeImage2)
+                        .setAssetsLargeText(config.LargeText2)
+                        .setAssetsSmallImage(config.SmallImage2)
+                        .setAssetsSmallText(config.SmallText2)
+                        .addButton(config.FirstButtonName2, config.FirstButtonUrl2)
+                        .addButton(config.SecondButtonName2, config.SecondButtonUrl2);
+                    client.user.setPresence({ activities: [state,rpc]})
+                }
+            }
+        } else {
+            console.error(`HTTP error! status: ${response.status}`);
+        }
+    } catch (error) {
+        console.error("An error occurred:", error);
+    } finally {
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        activity(url, channel_id);
+    }
 }
-let showTime = config.showTime;
 
-client.on("ready", async () => {
-  var AsciiTable = require("ascii-table");
-  var table = new AsciiTable();
-  table.setBorder("❘", "─", "✾", "❀");
-  table.setTitle(`Logged In As ${client.user.username}!`);
-  table
-    .addRow(`Node.js`, `${process.version}`)
-    .addRow(
-      `Memory`,
-      `${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB / ${(
-        process.memoryUsage().rss /
-        1024 /
-        1024
-      ).toFixed(2)} MB`
-    );
-
-  setTimeout(() => {
-    console.log(table.toString());
-  }, 3000);
-});
-
-setInterval(async () => {
-  const broadcasting = new Discord.CustomStatus(client).setEmoji('✨').setState('치지직 방송중!');
-  const nope = new Discord.CustomStatus(client).setEmoji('🎲').setState('뒹굴거리는 중!');
-
-  const r1 = new Discord.RichPresence(client)
-    .setApplicationId("1212531074417303573")
-    .setType("STREAMING") // PLAYING, STREAMING
-    .setURL("https://chzzk.naver.com/6d395c84c99777272f872171b4dfc122")
-    .setState(config.Broadcasting)
-    .setName(config.Name)
-    .setDetails(config.Details)
-    .setAssetsLargeImage(config.LargeImage)
-    .setAssetsLargeText(config.LargeText)
-    .setAssetsSmallImage(config.SmallImage)
-    .setAssetsSmallText(config.SmallText)
-    .addButton(config.FirstButtonName, config.FirstButtonUrl)
-    .addButton(config.SecondButtonName, config.SecondButtonUrl);
-
-  const r2 = new Discord.RichPresence(client)
-    .setApplicationId("1212531074417303573")
-    .setType("PLAYING") // PLAYING, STREAMING
-    .setURL("https://chzzk.naver.com/6d395c84c99777272f872171b4dfc122")
-    .setState(config.State)
-    .setName(config.Name2)
-    .setDetails(config.Details2)
-    .setAssetsLargeImage(config.LargeImage2)
-    .setAssetsLargeText(config.LargeText2)
-    .setAssetsSmallImage(config.SmallImage2)
-    .setAssetsSmallText(config.SmallText2)
-    .addButton(config.FirstButtonName2, config.FirstButtonUrl2)
-    .addButton(config.SecondButtonName2, config.SecondButtonUrl2);
-
-  console.log(await checkNaverStatus())
-  if (await checkNaverStatus() == 'OPEN') {
-    await client.user.setPresence({ activities: [r1, broadcasting] });
-  } else {
-    await client.user.setPresence({ activities: [r2, nope] });
-  }
-}, 15000); // Update every 15 seconds
-
-
-function formatTime() {
-  const date = new Date();
-  const options = {
-    timeZone: config.timeZone,
-    hour12: true,
-    hour: "numeric",
-    minute: "numeric",
-    day: "numeric",
-    month: "numeric",
-    year: "numeric",
-  };
-
-  const time = new Intl.DateTimeFormat("en-US", options).format(date);
-  const timeWithSeparator = time.replace(" ", " | "); // This is the time and date separator, don't touch, just use '|'
-  return timeWithSeparator;
-}
-setTimeout(() => {
-  if (!client || !client.user) {
-    console.log("Cient didn't logged in.. Killing the process..")
-    process.kill(1);
-  } else {
-    console.log("Client has succesfully logged in!")
-  }
-}, 1 * 1000 * 20);
-const keepAlive = require("./server.js");
-keepAlive();
-client.login(
-  config.token
-);
-
-///////////////////////////
-// Aayu5h and Sahil
-// https://discord.gg/uepgJzsf6n
-// https://spicydevs.me/
-///////////////////////////

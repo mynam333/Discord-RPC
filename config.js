@@ -6,9 +6,7 @@
 
 module.exports = {
   // refer to tutorial1.png and tutorial2.png in the repo for help
-  showTime: false, // Toggle to show or hide time in status (true/false)
   token: process.env['TOKEN'],
-  timeZone: "Asia/Seoul", //Your Timezone, eg Asia/Kolkata
   Name: " ",
   Details: "치지직 스트리머 유아루입니다!",
   Broadcasting: "현재 방송중입니다!!",
