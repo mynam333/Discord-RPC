@@ -22,6 +22,8 @@ client.on('ready', async (c) => {
   }, 15000);
 })
 
+const keepAlive = require("./server.js");
+keepAlive();
 client.login(config.token);
 
 async function activity(url, channel_id) {
