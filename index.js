@@ -20,6 +20,15 @@ client.on('ready', async (c) => {
   }, 15000);
 })
 
+setTimeout(() => {
+    if (!client || !client.user) {
+      console.log("Cient didn't logged in.. Killing the process..")
+      process.kill(1);
+    } else {
+      console.log("Client has succesfully logged in!")
+    }
+  }, 1 * 1000 * 20);
+
 const keepAlive = require("./server.js");
 keepAlive();
 client.login(config.token);
@@ -85,7 +94,7 @@ async function activity(url, channel_id) {
     } catch (error) {
         console.error("An error occurred:", error);
     } finally {
-        await new Promise(resolve => setTimeout(resolve, 3000));
+        await new Promise(resolve => setTimeout(resolve, 15000));
         activity(url, channel_id);
     }
 }
