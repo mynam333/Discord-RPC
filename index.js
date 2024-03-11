@@ -15,8 +15,6 @@ client.on('ready', async (c) => {
   const channel_id = '6d395c84c99777272f872171b4dfc122'
   const url = `https://api.chzzk.naver.com/service/v2/channels/${channel_id}/live-detail`
 
-  activity(url, channel_id);
-
   setInterval(() => {
       activity(url, channel_id);
   }, 15000);
@@ -46,9 +44,9 @@ async function activity(url, channel_id) {
                     const channel_image = channel ? (channel.channelImageUrl || "https://ssl.pstatic.net/cmstatic/nng/img/img_anonymous_square_gray_opacity2x.png?type=f120_120_na") : "https://ssl.pstatic.net/cmstatic/nng/img/img_anonymous_square_gray_opacity2x.png?type=f120_120_na";
                     const preview_image = (data.content.liveImageUrl || '').replace('{type}', '1080');
                     const user_count_2 = user_count.toLocaleString();
-                    const state = new Discord.CustomStatus(client).setEmoji('✨').setState('치지직 방송중!');
+                    const state1 = new Discord.CustomStatus(client).setEmoji('✨').setState('치지직 방송중!');
                     const image = await Discord.RichPresence.getExternal(client,'1212531074417303573',preview_image,preview_image)
-                    const rpc = new Discord.RichPresence(client)
+                    const rpc1 = new Discord.RichPresence(client)
                         .setApplicationId("1212531074417303573")
                         .setType("STREAMING") // PLAYING, STREAMING
                         .setURL(`https://chzzk.naver.com/live/${channel_id}`)
@@ -61,11 +59,11 @@ async function activity(url, channel_id) {
                         .setAssetsSmallText(`${user_count_2}명 시청중...`)
                         .addButton(config.FirstButtonName, config.FirstButtonUrl)
                         .addButton(config.SecondButtonName, config.SecondButtonUrl);
-                    client.user.setPresence({ activities: [state,rpc]})
+                    client.user.setPresence({ activities: [state1,rpc1]})
                 }
                 else{
-                    const state = new Discord.CustomStatus(client).setEmoji('🎲').setState('뒹굴거리는 중!');
-                    const rpc = new Discord.RichPresence(client)
+                    const state2 = new Discord.CustomStatus(client).setEmoji('🎲').setState('뒹굴거리는 중!');
+                    const rpc2 = new Discord.RichPresence(client)
                         .setApplicationId("1212531074417303573")
                         .setType("PLAYING") // PLAYING, STREAMING
                         .setURL(`https://chzzk.naver.com/${channel_id}`)
@@ -78,7 +76,7 @@ async function activity(url, channel_id) {
                         .setAssetsSmallText(config.SmallText2)
                         .addButton(config.FirstButtonName2, config.FirstButtonUrl2)
                         .addButton(config.SecondButtonName2, config.SecondButtonUrl2);
-                    client.user.setPresence({ activities: [state,rpc]})
+                    client.user.setPresence({ activities: [state2,rpc2]})
                 }
             }
         } else {
