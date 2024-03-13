@@ -71,7 +71,7 @@ setInterval(async () => {
   const r1 = new Discord.RichPresence(client)
     .setApplicationId("1212531074417303573")
     .setType("STREAMING") // PLAYING, STREAMING
-    .setURL(`https://chzzk.naver.com/live/${channel_id}`)
+    .setURL(`https://chzzk.naver.com/live/6d395c84c99777272f872171b4dfc122`)
     .setState(live_Title)
     .setName(config.Name)
     .setDetails('치지직에서 방송중입니다!')
