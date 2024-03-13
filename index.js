@@ -54,7 +54,8 @@ client.on("ready", async () => {
 });
 
 setInterval(async () => {
-  const data = await checkNaverStatus().json();
+  const rawdata = await checkNaverStatus();
+  const data = rawdata.json()
   const { status, liveTitle, liveCategoryValue, concurrentUserCount, channel } = data.content;
   const category = liveCategoryValue || '기타';
   const user_count = concurrentUserCount || 'None';
