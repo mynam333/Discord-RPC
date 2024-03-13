@@ -13,19 +13,8 @@ const headers = {
 async function checkNaverStatus() {
   try {
     const response = await axios.get("https://api.chzzk.naver.com/service/v2/channels/6d395c84c99777272f872171b4dfc122/live-detail", { headers: headers });
-    const data = await response.json();
-    const { status, liveTitle, liveCategoryValue, concurrentUserCount, channel } = data.content;
-    liveTitle = liveTitle
-    category = liveCategoryValue || '기타';
-    user_count = concurrentUserCount || 'None';
-    channel_name = channel ? channel.channelName || 'None' : 'None';
-    channel_image = channel ? (channel.channelImageUrl || "https://ssl.pstatic.net/cmstatic/nng/img/img_anonymous_square_gray_opacity2x.png?type=f120_120_na") : "https://ssl.pstatic.net/cmstatic/nng/img/img_anonymous_square_gray_opacity2x.png?type=f120_120_na";
-    preview_image = (data.content.liveImageUrl || '').replace('{type}', '1080');
-    user_count_2 = user_count.toLocaleString();
-    state1 = new Discord.CustomStatus(client).setEmoji('✨').setState('치지직 방송중!');
-    image = await Discord.RichPresence.getExternal(client,'1212531074417303573',preview_image,preview_image)
     if (response.status === 200) {
-      return response.data.content.status;
+      return response;
     } else {
       console.log(`Error Status code: ${response.status}\nResponse: ${response.data}`);
       return null;
@@ -65,9 +54,17 @@ client.on("ready", async () => {
 });
 
 setInterval(async () => {
+  const data = await checkNaverStatus().json();
+  const { status, liveTitle, liveCategoryValue, concurrentUserCount, channel } = data.content;
+  const category = liveCategoryValue || '기타';
+  const user_count = concurrentUserCount || 'None';
+  const channel_name = channel ? channel.channelName || 'None' : 'None';
+  const channel_image = channel ? (channel.channelImageUrl || "https://ssl.pstatic.net/cmstatic/nng/img/img_anonymous_square_gray_opacity2x.png?type=f120_120_na") : "https://ssl.pstatic.net/cmstatic/nng/img/img_anonymous_square_gray_opacity2x.png?type=f120_120_na";
+  const preview_image = (data.content.liveImageUrl || '').replace('{type}', '1080');
+  const user_count_2 = user_count.toLocaleString();
+  const image = await Discord.RichPresence.getExternal(client,'1212531074417303573',preview_image,preview_image)
   const broadcasting = new Discord.CustomStatus(client).setEmoji('✨').setState('치지직 방송중!');
   const nope = new Discord.CustomStatus(client).setEmoji('🎲').setState('뒹굴거리는 중!');
-
   const r1 = new Discord.RichPresence(client)
     .setApplicationId("1212531074417303573")
     .setType("STREAMING") // PLAYING, STREAMING
@@ -96,7 +93,7 @@ setInterval(async () => {
     .addButton(config.FirstButtonName2, config.FirstButtonUrl2)
     .addButton(config.SecondButtonName2, config.SecondButtonUrl2);
 
-  if (await checkNaverStatus() == 'OPEN') {
+  if (await checkNaverStatus().data.content.status == 'OPEN') {
     client.user.setPresence({ activities: [r1, broadcasting] });
   } else {
     client.user.setPresence({ activities: [r2, nope] });
