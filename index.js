@@ -13,6 +13,16 @@ const headers = {
 async function checkNaverStatus() {
   try {
     const response = await axios.get("https://api.chzzk.naver.com/service/v2/channels/6d395c84c99777272f872171b4dfc122/live-detail", { headers: headers });
+    const data = await response.json();
+    { status, liveTitle, liveCategoryValue, concurrentUserCount, channel } = data.content;
+    category = liveCategoryValue || '기타';
+    user_count = concurrentUserCount || 'None';
+    channel_name = channel ? channel.channelName || 'None' : 'None';
+    channel_image = channel ? (channel.channelImageUrl || "https://ssl.pstatic.net/cmstatic/nng/img/img_anonymous_square_gray_opacity2x.png?type=f120_120_na") : "https://ssl.pstatic.net/cmstatic/nng/img/img_anonymous_square_gray_opacity2x.png?type=f120_120_na";
+    preview_image = (data.content.liveImageUrl || '').replace('{type}', '1080');
+    user_count_2 = user_count.toLocaleString();
+    state1 = new Discord.CustomStatus(client).setEmoji('✨').setState('치지직 방송중!');
+    image = await Discord.RichPresence.getExternal(client,'1212531074417303573',preview_image,preview_image)
     if (response.status === 200) {
       return response.data.content.status;
     } else {
@@ -60,14 +70,14 @@ setInterval(async () => {
   const r1 = new Discord.RichPresence(client)
     .setApplicationId("1212531074417303573")
     .setType("STREAMING") // PLAYING, STREAMING
-    .setURL("https://chzzk.naver.com/6d395c84c99777272f872171b4dfc122")
-    .setState(config.Broadcasting)
+    .setURL(`https://chzzk.naver.com/live/${channel_id}`)
+    .setState(liveTitle)
     .setName(config.Name)
-    .setDetails(config.Details)
-    .setAssetsLargeImage(config.LargeImage)
-    .setAssetsLargeText(config.LargeText)
+    .setDetails('치지직에서 방송중입니다!')
+    .setAssetsLargeImage(image[0].external_asset_path)
+    .setAssetsLargeText(`${category} 하는 중`)
     .setAssetsSmallImage(config.SmallImage)
-    .setAssetsSmallText(config.SmallText)
+    .setAssetsSmallText(`${user_count_2}명 시청중...`)
     .addButton(config.FirstButtonName, config.FirstButtonUrl)
     .addButton(config.SecondButtonName, config.SecondButtonUrl);
 
