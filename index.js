@@ -14,7 +14,8 @@ async function checkNaverStatus() {
   try {
     const response = await axios.get("https://api.chzzk.naver.com/service/v2/channels/6d395c84c99777272f872171b4dfc122/live-detail", { headers: headers });
     const data = await response.json();
-    { status, liveTitle, liveCategoryValue, concurrentUserCount, channel } = data.content;
+    const { status, liveTitle, liveCategoryValue, concurrentUserCount, channel } = data.content;
+    live_Title = liveTitle
     category = liveCategoryValue || '기타';
     user_count = concurrentUserCount || 'None';
     channel_name = channel ? channel.channelName || 'None' : 'None';
@@ -71,7 +72,7 @@ setInterval(async () => {
     .setApplicationId("1212531074417303573")
     .setType("STREAMING") // PLAYING, STREAMING
     .setURL(`https://chzzk.naver.com/live/${channel_id}`)
-    .setState(liveTitle)
+    .setState(live_Title)
     .setName(config.Name)
     .setDetails('치지직에서 방송중입니다!')
     .setAssetsLargeImage(image[0].external_asset_path)
