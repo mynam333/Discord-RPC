@@ -50,7 +50,7 @@ setInterval(async () => {
     const user_count = concurrentUserCount || 'None';
     var preview_image = (data.data.content.liveImageUrl || '').replace('{type}', '1080');
     const user_count_2 = user_count.toLocaleString();
-    var image = await RichPresence.getExternal(client, '902717949410955264', preview_image,)
+    var image = await RichPresence.getExternal(client, '902717949410955264', `${preview_image}?t=${Date.now()}`,)
 
     const broadcasting = new CustomStatus(client).setEmoji('✨').setState('치지직 방송중!');
     const broadcast = new RichPresence(client)

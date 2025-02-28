@@ -1,10 +1,21 @@
 {
   "name": "discord-rpc",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "index.cjs",
+  "bin": "index.cjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node index.js",
+    "build": "pkg . --targets node18-win-x64 --public --experimental-modules"
+  },
+  "pkg": {
+    "assets": [
+      "node_modules/fetch-cookie/**/*",
+      "node_modules/axios/**/*"
+    ],
+    "scripts": [
+      "node_modules/fetch-cookie/**/*.js"
+    ]
   },
   "keywords": [],
   "author": "",
@@ -15,5 +26,6 @@
     "axios": "^1.8.1",
     "discord.js-selfbot-v13": "^3.6.0",
     "dotenv": "^16.4.7"
-  }
+  },
+  "type": "commonjs"
 }
